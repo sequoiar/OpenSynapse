@@ -9,7 +9,8 @@ A task routine is a simple client socket application/script called by a unique n
 What is Key-based Task Routine?
 Open Synapse supports distributed task management. By default, server chooses one of those distributed tasks randomly but sometimes tasks may need specific selection. As in memory cache applications, key-based selection is a highly recommended distribution method.
 
-
+Notes:
+Open Synapse reserved uuid parameter for tagging transactions. If you use uuid parameter Open Synapse updates it with new one. Thus, your task routine gets a different uuid value.
 
 
 
