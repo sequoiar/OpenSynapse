@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Open Synapse: Network Application Server
-
-    Copyright (c) 2010 Umut Aydin(MrGoodbyte)
+    Open Synapse, Umut Aydin(MrGoodbyte), Copyright (c) 2011
     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
     to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
     sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -15,6 +13,7 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+from config import STATS
 from config import REQUESTS
 from config import TASKS
 
@@ -46,7 +45,7 @@ def protocolHandler(socket, address):
                         response = call(request.get('p'), handler) # regular by default
 
                 elif request.get('c') == 'rsp': # response
-                    pass
+                    response = responseHandler(request.get('p'))
 
                 else:
                     response = None
@@ -87,23 +86,36 @@ def register(parameters, handler):
 
 """
 @param  socket: connection handler
-This method removes a task socket from list(tasks)
+This method removes a task socket from lists(tasks / requests)
 """
 def drop(socket):
     for task in TASKS:
-        for handler in TASKS.get(task).get(t):
-            if socket in TASKS.get(task).get(t):
+        for handler in TASKS.get(task).get('t'):
+            if socket in TASKS.get(task).get('t'):
                 TASKS.get(task).get(t).remove(socket)
 
-        if len(TASKS.get(task).get(t)) == 0:
+        if len(TASKS.get(task).get('t')) == 0:
             del TASKS[task]
+
+    for req in REQUESTS:
+        if socket == REQUESTS.get(req).get('s'):
+            del REQUESTS[req]
 
 """
 @param  Object parameters: request
 This method handles task response and returns the data to client socket if requested
 """
-def response(parameters):
-    pass
+def responseHandler(parameters):
+    if parameters.has_key('uuid'):
+        if REQUESTS.has_key(parameters.get('uuid')):
+            REQUESTS.get(parameters.get('uuid')).get('s').write("%s\r\n" % ('{"e":0,"r":%s}' % ujson.encode(parameters)))
+            REQUESTS.get(parameters.get('uuid')).get('s').flush()
+
+            STATS['process'] += 1
+            STATS['time'] = ((STATS['time'] * STATS['process']) + (int(time.time()) - REQUESTS.get(parameters.get('uuid')).get('t'))) / STATS['process']
+            del REQUESTS[parameters.get('uuid')]
+
+    return None
 
 """
 @param  Object parameters: request
@@ -134,6 +146,7 @@ def call(parameters, socket):
 
             handler.write("%s\r\n" % ujson.encode(data))
             handler.flush()
+            STATS['global'] += 1
             return None
 
         else:
