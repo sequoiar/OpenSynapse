@@ -22,7 +22,7 @@ import ujson
 SERVER = '127.0.0.1'
 PORT   = 8688
 
-class JobbarWorker(LineReceiver):
+class SampleWorker(LineReceiver):
     pattern = {
         'my-task': 'myTask'
     }
@@ -49,6 +49,7 @@ class JobbarWorker(LineReceiver):
                 pass
 
     def myTask(self, data):
+        print data
         if data.has_key('uuid'):
             return '{"c":"rsp","p":%s}' % ujson.encode(data)
         else:

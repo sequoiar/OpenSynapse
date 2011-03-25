@@ -13,9 +13,7 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from config import STATS
-from config import REQUESTS
-from config import TASKS
+from config import *
 
 import random
 import time
@@ -57,7 +55,8 @@ def protocolHandler(socket, address):
             else:
                 handler.write("%s\r\n" % '{"e":2,"r":""}') # missing parameters(c:command, p:parameters)
                 handler.flush()
-        except:
+        except Exception as e:
+            print e
             handler.write("%s\r\n" % '{"e":1,"r":""}') # global error
             handler.flush()
 
@@ -175,7 +174,7 @@ def select(name, key):
         val = calculate(key)
         return TASKS.get(name).get('t')[val % len(TASKS.get(name).get('t'))]
     else:
-        return random.sample(TASKS.get(name).get('t'), 1)
+        return random.sample(TASKS.get(name).get('t'), 1)[0]
 
 
 
