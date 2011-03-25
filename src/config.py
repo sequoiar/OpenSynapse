@@ -15,12 +15,9 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from config        import PORT
-from gevent.server import StreamServer
-from protocol      import *
-
-server = StreamServer(('0.0.0.0', PORT), protocolHandler)
-server.serve_forever()
+PORT     = 8688
+REQUESTS = {}
+TASKS    = {}
 
 
 
