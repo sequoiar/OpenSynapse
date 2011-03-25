@@ -1,6 +1,15 @@
 Open Synapse
 
-Open Synapse is an Async Task Server. Basically, the server application handles communication between task routines. A task routine is a simple client socket application/script called by a unique name. Open Synapse delivers messages by that unique name. You can write your task routines in any language which supports network sockets.
+What is Open Synapse?
+Open Synapse is an Async Task Server. Basically, the server application handles communication between task routines.
+
+What is Task Routine?
+A task routine is a simple client socket application/script called by a unique name. Open Synapse delivers messages by that unique name. You can write your task routines in any language which supports network sockets.
+
+What is Key-based Task Routine?
+Open Synapse supports distributed task management. By default, server chooses one of those distributed tasks randomly but sometimes tasks may need specific selection. As in memory cache applications, key-based selection is a highly recommended distribution method.
+
+
 
 
 

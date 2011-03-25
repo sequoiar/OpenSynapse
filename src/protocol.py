@@ -144,7 +144,7 @@ def call(parameters, socket):
                     't': int(time.time())
                 }
 
-            handler.write("%s\r\n" % ujson.encode(data))
+            handler.write("%s\r\n" % ('{"n":"%s","p":%s}' % (parameters.get('n'), ujson.encode(data))))
             handler.flush()
             STATS['global'] += 1
             return None
