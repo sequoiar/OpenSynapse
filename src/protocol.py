@@ -143,9 +143,11 @@ def call(parameters, socket):
                     't': int(time.time())
                 }
 
+            print "handler is ready"
             handler.write("%s\r\n" % ('{"n":"%s","p":%s}' % (parameters.get('n'), ujson.encode(data))))
             handler.flush()
             STATS['global'] += 1
+            print "message sent"
             return None
 
         else:
