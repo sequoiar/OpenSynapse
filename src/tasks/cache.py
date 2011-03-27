@@ -22,7 +22,7 @@ import ujson
 SERVER = '127.0.0.1'
 PORT   = 8688
 
-class JobbarWorker(LineReceiver):
+class SampleWorker(LineReceiver):
     pattern = {
         'cache-get': 'get',
         'cache-set': 'set'
@@ -33,7 +33,7 @@ class JobbarWorker(LineReceiver):
             for job in self.pattern:
                 self.transport.write("%s\r\n" % ujson.encode({
                     'c': 'reg',
-                    'p': {'n': job}
+                    'p': {'n': job, 'k': True}
                 }));
 
     def lineReceived(self, line):

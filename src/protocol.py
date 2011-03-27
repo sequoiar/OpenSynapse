@@ -56,7 +56,6 @@ def protocolHandler(socket, address):
                 handler.write("%s\r\n" % '{"e":2,"r":""}') # missing parameters(c:command, p:parameters)
                 handler.flush()
         except Exception as e:
-            print e
             handler.write("%s\r\n" % '{"e":1,"r":""}') # global error
             handler.flush()
 
@@ -137,7 +136,7 @@ def call(parameters, socket):
         if TASKS.has_key(parameters.get('n')): # local task
             handler = select(parameters.get('n'), key)
             if socket != None:
-                data['uuid'] = uuid.uuid1()
+                data['uuid'] = str(uuid.uuid1())
                 REQUESTS[data['uuid']] = {
                     's': socket,
                     't': int(time.time())
