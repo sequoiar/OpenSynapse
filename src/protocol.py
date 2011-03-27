@@ -30,6 +30,8 @@ def protocolHandler(socket, address):
                 drop(handler)
                 break # client disconnected
 
+            # {"c":"cll", "p":{"n":"cache-get", "d":{"k":"my-key"}}}
+            # {"c":"cll", "p":{"n":"cache-set", "d":{"k":"my-key", "v":"Hello World!"}}}
             request = ujson.decode(line) # ultrajson parser
             if request.has_key('c') and request.has_key('p'): # command, parameter
                 # switch by command

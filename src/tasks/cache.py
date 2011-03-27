@@ -52,8 +52,7 @@ class SampleWorker(LineReceiver):
                 if data.has_key('n') and self.pattern.has_key(data.get('n')):
                     response = getattr(self, self.pattern.get(data.get('n')))(data.get('uuid'), data.get('p'))
                     if response != None:
-                        self.transport.write("%s\r\n" % response)
-
+                        self.transport.write("%s\r\n" % ujson.encode(response))
             except:
                 pass
 
@@ -61,11 +60,23 @@ class SampleWorker(LineReceiver):
         if id != None:
             if data.has_key('k') and self.db.has_key(data.get('k')):
                 if (int(time.time()) - self.db.get(data.get('k')).get('c')) < self.db.get(data.get('k')).get('e'):
-                    return '{"c":"rsp","p":{"v":%s,"uuid":"%s"}}' % (ujson.encode(self.db.get(data.get('k')).get('v')), id)
+                    return {
+                        'c': 'rsp',
+                        'p': {
+                            'v': self.db.get(data.get('k')).get('v'),
+                            'uuid': id
+                        }
+                    }
                 else: # delete record if expired
                     del self.db[data.get('k')]
 
-            return '{"c":"rsp","p":{"v":None,"uuid":"%s"}}' % id
+            return {
+                'c': 'rsp',
+                'p': {
+                    'v': None,
+                    'uuid': id
+                }
+            }
 
         return None
 
