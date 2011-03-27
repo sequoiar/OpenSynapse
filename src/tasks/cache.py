@@ -24,21 +24,25 @@ SERVER = '127.0.0.1'
 PORT   = 8688
 
 class SampleWorker(LineReceiver):
-    pattern = {
-        'cache-get': 'get',
-        'cache-set': 'set'
-    }
-    expire = 3600
-    limit = 500000
-    db = {}
+    pattern = {'cache-get': 'get', 'cache-set': 'set'}
+    byKey   = {'cache-get': True}
+    expire  = 3600
+    limit   = 500000
+    db      = {}
 
     def connectionMade(self):
         if len(self.pattern):
             for job in self.pattern:
-                self.transport.write("%s\r\n" % ujson.encode({
-                    'c': 'reg',
-                    'p': {'n': job, 'k': True}
-                }));
+                if self.byKey.has_key(job) and self.byKey.get(job):
+                    self.transport.write("%s\r\n" % ujson.encode({
+                        'c': 'reg',
+                        'p': {'n': job, 'k': True}
+                    }));
+                else:
+                    self.transport.write("%s\r\n" % ujson.encode({
+                        'c': 'reg',
+                        'p': {'n': job, 'k': False}
+                    }));
 
     def lineReceived(self, line):
         data = line.strip()
