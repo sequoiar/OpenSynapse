@@ -104,9 +104,9 @@ def drop(socket):
 This method handles task response and returns the data to client socket if requested
 """
 def responseHandler(parameters):
-    if parameters.has_key('uuid'):
+    if parameters.has_key('uuid') and parameters.has_key('v'):
         if REQUESTS.has_key(parameters.get('uuid')):
-            REQUESTS.get(parameters.get('uuid')).get('s').write("%s\r\n" % ('{"e":0,"r":%s}' % ujson.encode(parameters)))
+            REQUESTS.get(parameters.get('uuid')).get('s').write("%s\r\n" % ('{"e":0,"r":%s}' % ujson.encode(parameters.get('v'))))
             REQUESTS.get(parameters.get('uuid')).get('s').flush()
 
             STATS['process'] += 1
@@ -136,13 +136,15 @@ def call(parameters, socket):
         if TASKS.has_key(parameters.get('n')): # local task
             handler = select(parameters.get('n'), key)
             if socket != None:
-                data['uuid'] = str(uuid.uuid1())
-                REQUESTS[data['uuid']] = {
+                id = str(uuid.uuid1())
+                REQUESTS[id] = {
                     's': socket,
                     't': int(time.time())
                 }
+            else:
+                id = None
 
-            handler.write("%s\r\n" % ('{"n":"%s","p":%s}' % (parameters.get('n'), ujson.encode(data))))
+            handler.write("%s\r\n" % ('{"n":"%s","uuid":"%s","p":%s}' % (parameters.get('n'), id, ujson.encode(data))))
             handler.flush()
             STATS['global'] += 1
             return None

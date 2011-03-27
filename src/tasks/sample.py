@@ -49,11 +49,7 @@ class SampleWorker(LineReceiver):
                 pass
 
     def myTask(self, data):
-        print data
-        if data.has_key('uuid'):
-            return '{"c":"rsp","p":%s}' % ujson.encode(data)
-        else:
-            return None
+        return '{"c":"rsp","p":{"v":%s}}' % ujson.encode(data)
 
 class SampleWorkerFactory(ClientFactory):
     protocol = SampleWorker
