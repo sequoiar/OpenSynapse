@@ -128,8 +128,8 @@ def call(parameters, socket):
         else:
             data = {}
 
-        if data.has_key('key'):
-            key = data.get('key')
+        if data.has_key('k'):
+            key = data.get('k')
         else:
             key = None
 

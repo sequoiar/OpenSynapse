@@ -9,10 +9,23 @@ A task routine is a simple client socket application/script called by a unique n
 What is Key-based Task Routine?
 Open Synapse supports distributed task management. By default, server chooses one of those distributed tasks randomly but sometimes tasks may need specific selection. As in memory cache applications, key-based selection is a highly recommended distribution method.
 
-Notes:
-Open Synapse reserved uuid parameter for tagging transactions. If you use uuid parameter Open Synapse updates it with new one. Thus, your task routine gets a different uuid value.
+Installation & Setup:
+To run Open Synapse, you need these libraries:
+- gevent (http://gevent.org)
+- ujson (https://github.com/jskorpan/ultrajson)
 
+to install:
+$git clone git@github.com:MrGoodbyte/OpenSynapse.git
 
+to run:
+$python server.py
 
+Note: You can modify PORT information in config.py file.
+
+Example Transactions:
+{“c”:”reg”, “p”:{“n”:”my-task”}}
+{“c”:”reg”, “p”:{“n”:”my-key-based-task”, “k”:true}}
+{“c”:”cll”, “p”:{“n”:”my-task”, “d”:{“id”:5}}}
+{“c”:”cll”, “p”:{“n”:”my-key-based-task”, “d”:{“k”:”my-key”}}}
 
 
