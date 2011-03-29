@@ -24,6 +24,7 @@ Note: You can modify PORT information in config.py file.
 
 Tasks:
 You can find a sample task in tasks folder. There is also another example to understand how to use key-based load balancing. That example provides really fast and simple memory cache.
+Update: I added a new task routine called Distributed Session.
 
 Example Transactions:
 {“c”:”reg”, “p”:{“n”:”my-task”}}
