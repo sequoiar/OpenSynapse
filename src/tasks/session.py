@@ -83,16 +83,21 @@ class SampleWorker(LineReceiver):
 
     def set(self, id, data):
         if len(self.db) < self.limit:
-            if data.has_key('k') and data.has_key('v') and data.has_key('ip'):
+            if data.has_key('k') and data.has_key('v'):
                 if data.has_key('e'):
                     expire = data.get('e')
                 else:
                     expire = self.expire
 
+                if data.has_key('ip'):
+                    ip = data.get('ip')
+                else:
+                    ip = None
+
                 self.db[data.get('k')] = {
                     'c' : int(time.time()),
                     'e' : expire,
-                    'ip': data.get('ip'),
+                    'ip': ip,
                     'v' : data.get('v')
                 }
 
