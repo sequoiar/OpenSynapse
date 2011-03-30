@@ -10,4 +10,81 @@
     FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+class OpenSynapse
+{
+    private $hostname,
+            $port,
+            $socket;
+
+
+    public function __construct($host, $port)
+    {
+        $this->hostname = $host;
+        $this->port = $port;
+    }
+
+    public function connect()
+    {
+        if ($this->isConnected())
+            return true;
+
+        try 
+        {
+            $this->socket = fsockopen($this->hostname, $this->port);
+            if ($this->isConnected())
+                return true;
+
+            return true;
+        }
+        catch (Exception $e) { return false; }
+    }
+
+    public function close()
+    {
+        try { fclose($this->socket); }
+        catch (Exception $e) { }
+    }
+
+    public function send($task, $parameters)
+    {
+        if (!$this->isConnected())
+            if (!$this->connect())
+                return false;
+
+        try
+        {
+            fwrite($this->socket, json_encode(array(
+                'c' => 'cll',
+                'p' => array(
+                    'n' => $task,
+                    'd' => $parameters
+                )
+            )));
+            return $this->response(fgets($this->socket));
+        }
+        catch (Exception $e) { return false; }
+    }
+
+    private function response($response)
+    {
+        try
+        {
+            $js = json_decode($response);
+            if (is_array($js) && isset($js['e']) && ($js['e'] == 0))
+                return $js['r'];
+
+            return false;
+        }
+        catch (Exception $e) { return false; }
+    }
+
+    private function isConnected()
+    {
+        if (!$this->socket)
+            return false;
+
+        return true;
+    }
+}
 ?>

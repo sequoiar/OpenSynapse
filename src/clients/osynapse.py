@@ -16,7 +16,64 @@
 import socket
 import ujson
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-s.send("%s\r\n" % message)
-s.close()
+class OpenSynapse():
+    hostname = None
+    port = None
+    s = None
+
+    def __init__(self, hostname, port):
+        self.port = port
+        self.hostname = hostname
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def connect(self):
+        if self.isConnected():
+            return True
+
+        try:
+            self.s.connect((self.hostname, self.port))
+            return True
+        except:
+            return False
+
+    def close(self):
+        try:
+            self.s.close()
+        except:
+            pass
+
+    def send(self, task, parameters):
+        if not self.isConnected():
+            if not self.connect():
+                return False
+
+        try:
+            self.s.send("%s\r\n" % ujson.encode({
+                'c': 'cll',
+                'p': {
+                    'n': task,
+                    'd': parameters
+                }
+            }))
+            #self.s.makefile.readline()
+            return True
+        except:
+            return False
+
+    def isConnected(self):
+        try:
+            self.s.getpeername()
+            return True
+        except:
+            return False
+
+if __name__ == "__main__":
+    osynapse = OpenSynapse('127.0.0.1', 8688)
+    osynapse.connect()
+    osynapse.send('cache-set', {'k': 'test', 'v': 'Hello World!'})
+    print osynapse.send('cache-get', {'k': 'test'})
+
+
+
+
+
